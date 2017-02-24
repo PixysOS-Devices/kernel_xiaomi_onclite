@@ -687,11 +687,8 @@ int LZ4_decompress_fast_usingDict(const char *source, char *dest,
 				  int originalSize,
 				  const char *dictStart, int dictSize)
 {
-	if (dictSize == 0 || dictStart + dictSize == dest)
-		return LZ4_decompress_fast(source, dest, originalSize);
-
-	return LZ4_decompress_fast_extDict(source, dest, originalSize,
-		dictStart, dictSize);
+	return LZ4_decompress_usingDict_generic(source, dest, 0,
+		originalSize, 0, dictStart, dictSize);
 }
 
 #ifndef STATIC
