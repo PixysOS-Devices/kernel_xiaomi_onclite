@@ -1020,7 +1020,7 @@ schedtune_boostgroup_init(struct schedtune *st, int idx)
 	for_each_possible_cpu(cpu) {
 		bg = &per_cpu(cpu_boost_groups, cpu);
 		bg->group[idx].boost = 0;
-		bg->group[idx].tasks = 0;
+		bg->group[idx].valid = true;
 	}
 
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
@@ -1080,6 +1080,7 @@ schedtune_boostgroup_release(struct schedtune *st)
 	/* Reset per CPUs boost group support */
 	for_each_possible_cpu(cpu) {
 		bg = &per_cpu(cpu_boost_groups, cpu);
+		bg->group[st->idx].valid = false;
 		bg->group[st->idx].boost = 0;
 	}
 
