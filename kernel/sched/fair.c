@@ -7436,12 +7436,9 @@ retry:
 		? best_active_cpu
 		: best_idle_cpu;
 
-	if (target_cpu == -1 && most_spare_cap_cpu != -1 &&
-		/* ensure we use active cpu for active migration */
-		!(p->state == TASK_RUNNING && !idle_cpu(most_spare_cap_cpu)))
-		target_cpu = most_spare_cap_cpu;
-
-	if (cpu_isolated(prev_cpu)) {
+	if (target_cpu == -1 && cpu_isolated(prev_cpu) &&
+			isolated_candidate != -1) {
+		target_cpu = isolated_candidate;
 		fbt_env->avoid_prev_cpu = true;
 		if (target_cpu == -1 && isolated_candidate != -1)
 			target_cpu = isolated_candidate;
