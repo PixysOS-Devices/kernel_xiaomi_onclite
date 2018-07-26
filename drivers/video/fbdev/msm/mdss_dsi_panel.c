@@ -22,6 +22,7 @@
 #include <linux/leds.h>
 #include <linux/qpnp/pwm.h>
 #include <linux/err.h>
+#include <linux/display_state.h>
 #include <linux/string.h>
 
 #include "mdss_dsi.h"
@@ -42,6 +43,13 @@ DEFINE_LED_TRIGGER(bl_led_trigger);
 static bool ce_enable = true;
 static bool srgb_enable = true;
 static bool cabc_enable = false;
+
+bool display_on = true;
+
+bool is_display_on()
+{
+	return display_on;
+}
 
 void mdss_dsi_panel_pwm_cfg(struct mdss_dsi_ctrl_pdata *ctrl)
 {
@@ -1006,6 +1014,8 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		pr_err("%s: Invalid input data\n", __func__);
 		return -EINVAL;
 	}
+	
+	display_on = true;
 
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
@@ -1130,7 +1140,7 @@ end:
 	pr_debug("%s:-\n", __func__);
 	return 0;
 }
-
+/*
 #ifdef TARGET_HW_MDSS_HDMI
 static void mdss_dsi_panel_off_hdmi(struct mdss_dsi_ctrl_pdata *ctrl,
 			struct mdss_panel_info *pinfo)
@@ -1148,7 +1158,7 @@ static void mdss_dsi_panel_off_hdmi(struct mdss_dsi_ctrl_pdata *ctrl,
 	(void)(*pinfo);
 }
 #endif
-
+*/
 static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 {
 	struct mdss_dsi_ctrl_pdata *ctrl = NULL;
@@ -1170,10 +1180,12 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 			goto end;
 	}
 
-	if (ctrl->off_cmds.cmd_cnt)
-		mdss_dsi_panel_cmds_send(ctrl, &ctrl->off_cmds, CMD_REQ_COMMIT);
-
-	mdss_dsi_panel_off_hdmi(ctrl, pinfo);
+	if (ctrl->ds_registered && pinfo->is_pluggable) {
+		mdss_dba_utils_video_off(pinfo->dba_data);
+		mdss_dba_utils_hdcp_enable(pinfo->dba_data, false);
+	}
+	
+	display_on = false;
 
 end:
 	/* clear idle state */
