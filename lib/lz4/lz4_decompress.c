@@ -88,8 +88,8 @@ static FORCE_INLINE int LZ4_decompress_generic(
 	BYTE *cpy;
 
 	const BYTE * const dictEnd = (const BYTE *)dictStart + dictSize;
-	static const unsigned int dec32table[] = { 0, 1, 2, 1, 4, 4, 4, 4 };
-	static const int dec64table[] = { 0, 0, 0, -1, 0, 1, 2, 3 };
+	static const unsigned int inc32table[8] = {0, 1, 2, 1, 0, 4, 4, 4};
+	static const int dec64table[8] = {0, 0, 0, -1, -4, 1, 2, 3};
 
 	const int safeDecode = (endOnInput == endOnInputSize);
 	const int checkOffset = ((safeDecode) && (dictSize < (int)(64 * KB)));
@@ -687,8 +687,11 @@ int LZ4_decompress_fast_usingDict(const char *source, char *dest,
 				  int originalSize,
 				  const char *dictStart, int dictSize)
 {
-	return LZ4_decompress_usingDict_generic(source, dest, 0,
-		originalSize, 0, dictStart, dictSize);
+	if (dictSize == 0 || dictStart + dictSize == dest)
+		return LZ4_decompress_fast(source, dest, originalSize);
+
+	return LZ4_decompress_fast_extDict(source, dest, originalSize,
+		dictStart, dictSize);
 }
 
 #ifndef STATIC
