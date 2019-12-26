@@ -17,6 +17,16 @@
 #include <linux/backing-dev.h>
 #include "internal.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_DYNAMIC_FSYNC
+#include <linux/dyn_sync_cntrl.h>
+#endif
+
+bool fsync_enabled = true;
+module_param(fsync_enabled, bool, 0755);
+
+>>>>>>> 0f739503ca9e... Added Dynamic Fsync 2.0
 #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
 			SYNC_FILE_RANGE_WAIT_AFTER)
 
@@ -93,6 +103,30 @@ static void fdatawait_one_bdev(struct block_device *bdev, void *arg)
 	 */
 	filemap_fdatawait_keep_errors(bdev->bd_inode->i_mapping);
 }
+
+#ifdef CONFIG_DYNAMIC_FSYNC
+/*
+ * Sync all the data for all the filesystems (called by sys_sync() and
+ * emergency sync)
+ */
+void sync_filesystems(int nowait)
+{
+	/*
+	 * Sync twice to reduce the possibility we skipped some inodes / pages
+	 * because they were temporarily locked
+	 */
+
+	iterate_supers(sync_inodes_one_sb, &nowait);
+	iterate_supers(sync_fs_one_sb, &nowait);
+	iterate_bdevs(fdatawrite_one_bdev, NULL);
+	iterate_bdevs(fdatawait_one_bdev, NULL);
+
+	iterate_supers(sync_inodes_one_sb, &nowait);
+	iterate_supers(sync_fs_one_sb, &nowait);
+	iterate_bdevs(fdatawrite_one_bdev, NULL);
+	iterate_bdevs(fdatawait_one_bdev, NULL);
+}
+#endif
 
 /*
  * Sync everything. We start by waking flusher threads so that most of
@@ -184,6 +218,17 @@ int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
 {
 	struct inode *inode = file->f_mapping->host;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (dyn_fsync_active && suspend_active)
+		return 0;
+#endif
+
+	if (!fsync_enabled)
+		return 0;
+
+>>>>>>> 0f739503ca9e... Added Dynamic Fsync 2.0
 	if (!file->f_op->fsync)
 		return -EINVAL;
 	if (!datasync && (inode->i_state & I_DIRTY_TIME)) {
@@ -225,11 +270,35 @@ static int do_fsync(unsigned int fd, int datasync)
 
 SYSCALL_DEFINE1(fsync, unsigned int, fd)
 {
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (dyn_fsync_active && suspend_active)
+		return 0;
+#endif
+
+	if (!fsync_enabled)
+		return 0;
+
+>>>>>>> 0f739503ca9e... Added Dynamic Fsync 2.0
 	return do_fsync(fd, 0);
 }
 
 SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
 {
+<<<<<<< HEAD
+=======
+
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (dyn_fsync_active && suspend_active)
+		return 0;
+#endif
+
+	if (!fsync_enabled)
+		return 0;
+
+>>>>>>> 0f739503ca9e... Added Dynamic Fsync 2.0
 	return do_fsync(fd, 1);
 }
 
@@ -289,6 +358,17 @@ SYSCALL_DEFINE4(sync_file_range, int, fd, loff_t, offset, loff_t, nbytes,
 	loff_t endbyte;			/* inclusive */
 	umode_t i_mode;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (dyn_fsync_active && suspend_active)
+		return 0;
+#endif
+
+	if (!fsync_enabled)
+		return 0;
+
+>>>>>>> 0f739503ca9e... Added Dynamic Fsync 2.0
 	ret = -EINVAL;
 	if (flags & ~VALID_FLAGS)
 		goto out;
@@ -369,5 +449,11 @@ out:
 SYSCALL_DEFINE4(sync_file_range2, int, fd, unsigned int, flags,
 				 loff_t, offset, loff_t, nbytes)
 {
+
+#ifdef CONFIG_DYNAMIC_FSYNC
+	if (dyn_fsync_active && suspend_active)
+		return 0;
+#endif
+
 	return sys_sync_file_range(fd, offset, nbytes, flags);
 }
