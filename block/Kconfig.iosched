@@ -59,18 +59,8 @@ choice
 	config DEFAULT_NOOP
 		bool "No-op"
 
-<<<<<<< HEAD
-=======
-	config DEFAULT_ANXIETY
-                bool "Anxiety" if IOSCHED_ANXIETY=y
-
-	config DEFAULT_FIOPS
-                bool "FIOPS" if IOSCHED_FIOPS=y
-
 	config DEFAULT_MAPLE
                 bool "Maple" if IOSCHED_MAPLE=y
-
->>>>>>> 0d7e8b7437f5... Set default I/O scheduler to Maple
 endchoice
 
 config DEFAULT_IOSCHED
