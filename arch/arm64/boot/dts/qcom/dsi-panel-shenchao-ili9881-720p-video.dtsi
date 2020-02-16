@@ -85,5 +85,9 @@
 		qcom,mdss-dsi-panel-status-check-mode = "reg_read";
 		qcom,mdss-dsi-panel-status-read-length = <1>;
 		qcom,mdss-dsi-panel-status-value = <0x9c>;
+		qcom,mdss-dsi-pan-enable-dynamic-fps;
+		qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_vfp";
+		qcom,partial-update-enabled = "single_roi";
+		qcom,panel-roi-alignment = <2 2 4 2 720 2>;
 	};
 };
