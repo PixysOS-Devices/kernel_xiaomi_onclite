@@ -1020,7 +1020,7 @@
 &msm_gpu {
 
 	qcom,ca-target-pwrlevel = <3>;
-	qcom,initial-pwrlevel = <7>;
+	qcom,initial-pwrlevel = <8>;
 	/delete-node/qcom,gpu-pwrlevels;
 
 	/* Power levels */
