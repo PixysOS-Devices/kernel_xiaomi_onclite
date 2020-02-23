@@ -275,6 +275,7 @@ u8 sdhci_msm_readb_relaxed(struct sdhci_host *host, u32 offset)
 {
 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
 	struct sdhci_msm_host *msm_host = pltfm_host->priv;
+	struct mmc_host *mmc = host->mmc;
 	void __iomem *base_addr;
 
 	if (msm_host->mci_removed)
