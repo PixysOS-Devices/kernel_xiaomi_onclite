@@ -8,6 +8,9 @@ config KEXEC_CORE
 config HOTPLUG_SMT
 	bool
 
+config SCHED_IDLE_FORCEPOLL
+       bool
+
 config OPROFILE
 	tristate "OProfile system profiling"
 	depends on PROFILING
