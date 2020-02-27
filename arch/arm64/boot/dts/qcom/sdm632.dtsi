@@ -1019,8 +1019,8 @@
 /* GPU Overrides*/
 &msm_gpu {
 
-	qcom,ca-target-pwrlevel = <3>;
-	qcom,initial-pwrlevel = <8>;
+	qcom,ca-target-pwrlevel = <5>;
+	qcom,initial-pwrlevel = <7>;
 	/delete-node/qcom,gpu-pwrlevels;
 
 	/* Power levels */
