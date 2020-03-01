@@ -1,4 +1,10 @@
 /*
+ * Use arch dependent cpu capacity functions
+ */
+SCHED_FEAT(ARCH_CAPACITY, true)
+SCHED_FEAT(ARCH_POWER, true)
+
+/*
  * Only give sleepers 50% of their service deficit. This allows
  * them to run sooner, but does not allow tons of sleepers to
  * rip the spread apart.
