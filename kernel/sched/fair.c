@@ -7176,7 +7176,7 @@ retry:
 				 */
 				if ((capacity_curr > new_util) &&
 					(capacity_orig - new_util > target_max_spare_cap)) {
-					target_max_spare_cap = capacity_orig - new_util;
+					target_max_spare_cap = capacity_orig - min_capped_util;
 					target_cpu = i;
 					continue;
 				}
@@ -7305,7 +7305,7 @@ retry:
 
 			/* Favor CPUs with maximum spare capacity */
 			if (capacity_orig >= target_capacity &&
-			    (capacity_orig - new_util) < target_max_spare_cap)
+			    (capacity_orig - min_capped_util) < target_max_spare_cap)
 				continue;
 
 			target_max_spare_cap = capacity_orig - min_capped_util;
