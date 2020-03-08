@@ -6987,6 +6987,10 @@ static int start_cpu(struct task_struct *p, bool boosted,
 		     struct cpumask *rtg_target)
 {
 	struct root_domain *rd = cpu_rq(smp_processor_id())->rd;
+
+	if(!sched_feat(STUNE_BOOST_BIAS_BIG))
+		return rd->min_cap_orig_cpu;
+
 	int start_cpu = -1;
 
 	if (boosted)
