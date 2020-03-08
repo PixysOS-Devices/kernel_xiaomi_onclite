@@ -1305,6 +1305,16 @@ static int _do_stune_boost(struct schedtune *st, int boost, int *slot)
 	return ret;
 }
 
+int do_prefer_idle(char *st_name, u64 prefer_idle)
+{
+	struct schedtune *st = getSchedtune(st_name);
+
+	if (!st)
+		return -EINVAL;
+
+	return prefer_idle_write(&st->css, NULL, prefer_idle);
+}
+
 int reset_stune_boost(char *st_name, int slot)
 {
 	int ret = 0;
