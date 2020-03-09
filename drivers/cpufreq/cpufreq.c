@@ -2494,6 +2494,9 @@ int cpufreq_boost_trigger_state(int state)
 	unsigned long flags;
 	int ret = 0;
 
+	/Always return 0 since boost frequency is not supported any longer
+	return 0;
+
 	if (cpufreq_driver->boost_enabled == state)
 		return 0;
 
