@@ -133,7 +133,6 @@
 		qcom,mdss-dsi-panel-status-command = [14 01 00 01 05 00 01 0a];
 		qcom,mdss-dsi-panel-status-read-length = <1>;
 		qcom,mdss-dsi-panel-status-value = <0x1c>;
-		qcom,esd-check-enabled;
 		qcom,mdss-dsi-pan-enable-dynamic-fps;
 		qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_vfp";
 		qcom,partial-update-enabled = "single_roi";
