@@ -456,42 +456,6 @@ menuconfig TCP_CONG_ADVANCED
 
 if TCP_CONG_ADVANCED
 
-config TCP_CONG_BIC
-	tristate "Binary Increase Congestion (BIC) control"
-	default m
-	---help---
-	BIC-TCP is a sender-side only change that ensures a linear RTT
-	fairness under large windows while offering both scalability and
-	bounded TCP-friendliness. The protocol combines two schemes
-	called additive increase and binary search increase. When the
-	congestion window is large, additive increase with a large
-	increment ensures linear RTT fairness as well as good
-	scalability. Under small congestion windows, binary search
-	increase provides TCP friendliness.
-	See http://www.csc.ncsu.edu/faculty/rhee/export/bitcp/
-
-config TCP_CONG_CUBIC
-	tristate "CUBIC TCP"
-	default y
-	---help---
-	This is version 2.0 of BIC-TCP which uses a cubic growth function
-	among other techniques.
-	See http://www.csc.ncsu.edu/faculty/rhee/export/bitcp/cubic-paper.pdf
-
-config TCP_CONG_WESTWOOD
-	tristate "TCP Westwood+"
-	default m
-	---help---
-	TCP Westwood+ is a sender-side only modification of the TCP Reno
-	protocol stack that optimizes the performance of TCP congestion
-	control. It is based on end-to-end bandwidth estimation to set
-	congestion window and slow start threshold after a congestion
-	episode. Using this estimation, TCP Westwood+ adaptively sets a
-	slow start threshold and a congestion window which takes into
-	account the bandwidth used  at the time congestion is experienced.
-	TCP Westwood+ significantly increases fairness wrt TCP Reno in
-	wired networks and throughput over wireless links.
-
 config TCP_CONG_HTCP
         tristate "H-TCP"
         default m
@@ -513,25 +477,6 @@ config TCP_CONG_HSTCP
 	increase the congestion window by when an ACK is received.
  	For more detail	see http://www.icir.org/floyd/hstcp.html
 
-config TCP_CONG_HYBLA
-	tristate "TCP-Hybla congestion control algorithm"
-	default n
-	---help---
-	TCP-Hybla is a sender-side only change that eliminates penalization of
-	long-RTT, large-bandwidth connections, like when satellite legs are
-	involved, especially when sharing a common bottleneck with normal
-	terrestrial connections.
-
-config TCP_CONG_VEGAS
-	tristate "TCP Vegas"
-	default n
-	---help---
-	TCP Vegas is a sender-side only change to TCP that anticipates
-	the onset of congestion by estimating the bandwidth. TCP Vegas
-	adjusts the sending rate by modifying the congestion
-	window. TCP Vegas should provide less packet loss, but it is
-	not as aggressive as TCP Reno.
-
 config TCP_CONG_NV
        tristate "TCP NV"
        default n
@@ -548,15 +493,6 @@ config TCP_CONG_NV
 
        For further details see http://www.brakmo.org/networking/tcp-nv/
 
-config TCP_CONG_SCALABLE
-	tristate "Scalable TCP"
-	default n
-	---help---
-	Scalable TCP is a sender-side only change to TCP which uses a
-	MIMD congestion control algorithm which has some nice scaling
-	properties, though is known to have fairness issues.
-	See http://www.deneholme.net/tom/scalable/
-
 config TCP_CONG_LP
 	tristate "TCP Low Priority"
 	default n
@@ -565,43 +501,6 @@ config TCP_CONG_LP
 	to utilize only the excess network bandwidth as compared to the
 	``fair share`` of bandwidth as targeted by TCP.
 	See http://www-ece.rice.edu/networks/TCP-LP/
-
-config TCP_CONG_VENO
-	tristate "TCP Veno"
-	default n
-	---help---
-	TCP Veno is a sender-side only enhancement of TCP to obtain better
-	throughput over wireless networks. TCP Veno makes use of state
-	distinguishing to circumvent the difficult judgment of the packet loss
-	type. TCP Veno cuts down less congestion window in response to random
-	loss packets.
-	See <http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=1177186> 
-
-config TCP_CONG_YEAH
-	tristate "YeAH TCP"
-	select TCP_CONG_VEGAS
-	default n
-	---help---
-	YeAH-TCP is a sender-side high-speed enabled TCP congestion control
-	algorithm, which uses a mixed loss/delay approach to compute the
-	congestion window. It's design goals target high efficiency,
-	internal, RTT and Reno fairness, resilience to link loss while
-	keeping network elements load as low as possible.
-
-	For further details look here:
-	  http://wil.cs.caltech.edu/pfldnet2007/paper/YeAH_TCP.pdf
-
-config TCP_CONG_ILLINOIS
-	tristate "TCP Illinois"
-	default n
-	---help---
-	TCP-Illinois is a sender-side modification of TCP Reno for
-	high speed long delay links. It uses round-trip-time to
-	adjust the alpha and beta parameters to achieve a higher average
-	throughput and maintain fairness.
-
-	For further details see:
-	  http://www.ews.uiuc.edu/~shaoliu/tcpillinois/index.html
 
 config TCP_CONG_DCTCP
 	tristate "DataCenter TCP (DCTCP)"
@@ -657,31 +556,14 @@ config TCP_CONG_BBR
 
 choice
 	prompt "Default TCP congestion control"
-	default DEFAULT_CUBIC
+	default DEFAULT_BBR
 	help
 	  Select the TCP congestion control that will be used by default
 	  for all connections.
 
-	config DEFAULT_BIC
-		bool "Bic" if TCP_CONG_BIC=y
-
-	config DEFAULT_CUBIC
-		bool "Cubic" if TCP_CONG_CUBIC=y
 
 	config DEFAULT_HTCP
 		bool "Htcp" if TCP_CONG_HTCP=y
-
-	config DEFAULT_HYBLA
-		bool "Hybla" if TCP_CONG_HYBLA=y
-
-	config DEFAULT_VEGAS
-		bool "Vegas" if TCP_CONG_VEGAS=y
-
-	config DEFAULT_VENO
-		bool "Veno" if TCP_CONG_VENO=y
-
-	config DEFAULT_WESTWOOD
-		bool "Westwood" if TCP_CONG_WESTWOOD=y
 
 	config DEFAULT_DCTCP
 		bool "DCTCP" if TCP_CONG_DCTCP=y
@@ -691,9 +573,6 @@ choice
 
 	config DEFAULT_BBR
 		bool "BBR" if TCP_CONG_BBR=y
-
-	config DEFAULT_RENO
-		bool "Reno"
 endchoice
 
 endif
@@ -701,22 +580,15 @@ endif
 config TCP_CONG_CUBIC
 	tristate
 	depends on !TCP_CONG_ADVANCED
-	default y
+	default n
 
 config DEFAULT_TCP_CONG
 	string
-	default "bic" if DEFAULT_BIC
-	default "cubic" if DEFAULT_CUBIC
 	default "htcp" if DEFAULT_HTCP
-	default "hybla" if DEFAULT_HYBLA
-	default "vegas" if DEFAULT_VEGAS
-	default "westwood" if DEFAULT_WESTWOOD
-	default "veno" if DEFAULT_VENO
-	default "reno" if DEFAULT_RENO
 	default "dctcp" if DEFAULT_DCTCP
 	default "cdg" if DEFAULT_CDG
 	default "bbr" if DEFAULT_BBR
-	default "cubic"
+	default "bbr"
 
 config TCP_MD5SIG
 	bool "TCP: MD5 Signature Option support (RFC2385)"
