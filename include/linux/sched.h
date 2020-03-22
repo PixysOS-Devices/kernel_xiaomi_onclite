@@ -69,6 +69,17 @@ void su_exit(void);
 
 #define SCHED_ATTR_SIZE_VER0	48	/* sizeof first published struct */
 
+extern bool disable_boost;
+
+#ifdef CONFIG_SCHED_TUNE
+int disable_schedtune_boost(char *st_name, bool disable);
+#else
+static inline int disable_schedtune_boost(char *st_name, bool disable)
+{
+	return 0;
+}
+#endif
+
 /*
  * Extended scheduling parameters data structure.
  *
