@@ -640,6 +640,7 @@ int fts_fwupg_reset_to_romboot(struct i2c_client *client)
 	return 0;
 }
 
+
 /************************************************************************
 * Name: fts_fwupg_enter_into_boot
 * Brief: enter into boot environment, ready for upgrade
